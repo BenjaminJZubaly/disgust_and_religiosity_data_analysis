@@ -53,18 +53,205 @@ data.unclean <- data.unclean %>%
     )
   )
 
+# Combine ethnicity columns
+data.unclean$ethnicity <- as.character(data.unclean$ethnicity)
+  # Put "Other" responses in the ethnicity column
+data.unclean <- data.unclean %>%
+  mutate(
+    ethnicity = ifelse(ethnicity_other != "", ethnicity_other, ethnicity)
+  )
+  # Remove the ethnicity_other column
+data.unclean <- data.unclean %>% 
+  select(-ethnicity_other)
+  # Put in the right labels and make factor
+data.unclean$ethnicity <- factor(data.unclean$ethnicity, 
+                                             levels = c("1", 
+                                                        "2", 
+                                                        "3",
+                                                        "4",
+                                                        "5",
+                                                        "6",
+                                                        "7",
+                                                        "8",
+                                                        "9",
+                                                        "10",
+                                                        "11",
+                                                        "12",
+                                                        "13",
+                                                        "14",
+                                                        "15",
+                                                        "16",
+                                                        "Indian",
+                                                        "NZ Māori / Pākeha (European) mixed",
+                                                        "Asian-Mexican"), 
+                                             labels = c("African",
+                                                        "Black or African American",
+                                                        "Caribbean",
+                                                        "East Asian",
+                                                        "Latino or Hispanic",
+                                                        "Middle Eastern",
+                                                        "Mixed",
+                                                        "Native American or Alaskan Native",
+                                                        "South Asian",
+                                                        "White or Causasian",
+                                                        "White or Sapharic Jew",
+                                                        "Black British",
+                                                        "White Mexican",
+                                                        "Romani or Traveller",
+                                                        "South East Asian",
+                                                        "Rather Not Say",
+                                                        "South Asian",
+                                                        "Mixed",
+                                                        "Mixed"))
 
+# Combine nationality columns
+data.unclean$nationality <- as.character(data.unclean$nationality)
+# Put "Other" responses in the ethnicity column
+data.unclean <- data.unclean %>%
+  mutate(
+    nationality = ifelse(nationality_other != "", nationality_other, nationality)
+  )
+  # Remove the nationality_other column
+data.unclean <- data.unclean %>% 
+  select(-nationality_other)
+  # Standardize labels
+data.unclean <- data.unclean %>%
+  mutate(nationality = str_to_lower(nationality)) %>%
+  mutate(nationality = str_trim(nationality)) %>%
+  mutate(nationality = case_when(
+    nationality %in% c("1") ~ "United Kingdom", 
+    nationality %in% c("2") ~ "United States", 
+    nationality %in% c("3") ~ "Ireland", 
+    nationality %in% c("4") ~ "Germany", 
+    nationality %in% c("5") ~ "France", 
+    nationality %in% c("6") ~ "Spain", 
+    nationality %in% c("7") ~ "Canada", 
+    nationality %in% c("8") ~ "Mexico", 
+    nationality %in% c("9") ~ "Italy",
+    nationality %in% c("chile", "chilean") ~ "Chile",
+    nationality %in% c("portugal", "portuguese") ~ "Portugal",
+    nationality %in% c("south africa", "south african") ~ "South Africa",
+    nationality %in% c("greece", "greek") ~ "Greece",
+    nationality %in% c("czech republic", "czechia", "czech") ~ "Czech Republic",
+    nationality %in% c("australia", "australian") ~ "Australia",
+    nationality %in% c("kenya", "kenyan") ~ "Kenya",
+    nationality %in% c("brazil", "brazilian") ~ "Brazil",
+    nationality %in% c("sweden", "swedish") ~ "Sweden",
+    nationality %in% c("poland") ~ "Poland",
+    nationality %in% c("austria") ~ "Austria",
+    nationality %in% c("romania") ~ "Romania",
+    nationality %in% c("israel", "israeli") ~ "Israel",
+    nationality %in% c("nz european", "new zealand", "new zealander") ~ "New Zealand",
+    nationality %in% c("belgium") ~ "Belgium",
+    nationality %in% c("columbian", "colombian", "colombia") ~ "Columbia",
+    nationality %in% c("zimbabwe") ~ "Zimbabwe",
+    nationality %in% c("turkey") ~ "Turkey",
+    nationality %in% c("eritrea") ~ "Eritrea",
+    nationality %in% c("slovakia") ~ "Slovakia",
+    nationality %in% c("egypt") ~ "Egypt",
+    nationality %in% c("tunisian") ~ "Tunisia",
+    nationality %in% c("india") ~ "India",
+    nationality %in% c("hungarian", "hungary") ~ "Hungary",
+    nationality %in% c("saudi arabja") ~ "Saudi Arabia",
+    nationality %in% c("chinese") ~ "China",
+    nationality %in% c("portugual") ~ "Portugal",
+    nationality %in% c("finnish", "finland") ~ "Finland",
+    nationality %in% c("swiss", "Swiss") ~ "Sweden",
+    nationality %in% c("vietnamese") ~ "Vietnam",
+    nationality %in% c("algeria") ~ "Algeria",
+    nationality %in% c("japanese") ~ "Japan",
+    nationality %in% c("venezuelan") ~ "Venezuela",
+    nationality %in% c("ghanaian") ~ "Ghana",
+    TRUE ~ nationality # Keep the original if no match
+  ))
+  # Make it a factor
+data.unclean$nationality <- as.factor(data.unclean$nationality)
 
+# Combine religious affiliation columns
+data.unclean$religious_affiliation <- as.character(data.unclean$religious_affiliation)
+  # Put "Other" responses in the religious_affiliation column
+data.unclean <- data.unclean %>%
+  mutate(
+    religious_affiliation = ifelse(rel_aff_other != "", rel_aff_other, religious_affiliation)
+  )
+# Remove the rel_aff_other column
+data.unclean <- data.unclean %>% 
+  select(-rel_aff_other)
+# Standardize labels
+data.unclean <- data.unclean %>%
+  mutate(religious_affiliation = str_to_lower(religious_affiliation)) %>%
+  mutate(religious_affiliation = str_trim(religious_affiliation)) %>%
+  mutate(religious_affiliation = case_when(
+    religious_affiliation %in% c("1") ~ "Christian", 
+    religious_affiliation %in% c("2") ~ "Muslim", 
+    religious_affiliation %in% c("3") ~ "Hindu", 
+    religious_affiliation %in% c("4") ~ "Buddhist", 
+    religious_affiliation %in% c("5") ~ "Buddhist", 
+    religious_affiliation %in% c("6") ~ "None", 
+    religious_affiliation %in% c("anti-religions") ~ "Anti-religious",
+    religious_affiliation %in% c("agnostic", "agnostic ") ~ "Agnostic",
+    religious_affiliation %in% c("atheist") ~ "Atheist",
+    religious_affiliation %in% c("catholic", "roman catholic") ~ "Catholic",
+    religious_affiliation %in% c("spiritual", "spiritual ") ~ "Spiritual",
+    religious_affiliation %in% c("spiritualist") ~ "Spiritualist",
+    religious_affiliation %in% c("deism") ~ "Deist",
+    religious_affiliation %in% c("pagan") ~ "Pagan",
+    TRUE ~ religious_affiliation # Keep the original if no match
+  ))
+# Make it a factor
+data.unclean$religious_affiliation <- as.factor(data.unclean$religious_affiliation)
 
-
-
-
-
-
-
-
-
-
+# Collapse Christian affiliation into one variable
+data.unclean <- data.unclean %>%
+  mutate(christian_affiliation = case_when(
+    ca_catholic == 1 ~ "Catholic",
+    ca_protestant == 2 ~ "Protestant",
+    ca_orthodox == 3 ~ "Orthodox",
+    ca_pentecostal == 4 ~ "Pentecostal",
+    ca_lutheran == 5 ~ "Lutheran",
+    ca_methodist == 6 ~ "Methodist",
+    ca_anglican == 7 ~ "Anglican",
+    ca_baptist == 8 ~ "Baptist",
+    ca_presbyterian == 9 ~ "Presbyterian",
+    TRUE ~ NA_character_  # Handle cases where none are selected
+  ))
+  # Integrate the write-ins
+data.unclean <- data.unclean %>%
+  mutate(
+    christian_affiliation = ifelse(ca_other != "", ca_other, christian_affiliation)
+  )
+  # Consolodate the categories
+data.unclean <- data.unclean %>%
+  mutate(christian_affiliation = str_to_lower(christian_affiliation)) %>%
+  mutate(christian_affiliation = str_trim(christian_affiliation)) %>%
+  mutate(christian_affiliation = case_when(
+    christian_affiliation %in% c("catholic") ~ "Catholic",
+    christian_affiliation == "protestant" ~ "Protestant",
+    christian_affiliation == "lutheran" ~ "Lutheran",
+    christian_affiliation %in% c("evangelical", "grace community life", "full gospel", "new creation church christian !") ~ "Evangelical",
+    christian_affiliation == "congregationalist" ~ "Congregationalist",
+    christian_affiliation == "apostolic" ~ "Apostolic",
+    christian_affiliation == "non religious christian" ~ "Non-religious Christian",
+    christian_affiliation == "orthodox" ~ "Orthodox",
+    christian_affiliation == "seventh day adventist" ~ "Seventh Day Adventist",
+    christian_affiliation == "jehovah’s witness" ~ "Jehovah’s Witness",
+    christian_affiliation == "pentecostal" ~ "Pentecostal",
+    christian_affiliation == "baptist" ~ "Baptist",
+    christian_affiliation == "methodist" ~ "Methodist",
+    christian_affiliation == "presbyterian" ~ "Presbyterian",
+    christian_affiliation == "anglican" ~ "Anglican",
+    christian_affiliation %in% c("none", "i don’t know", "nondenominational", "christian") ~ "None",
+    TRUE ~ christian_affiliation # Keep the original if no match
+  ))
+  # Make it a factor
+data.unclean$christian_affiliation <- as.factor(data.unclean$christian_affiliation)
+  # Get rid of the other variables
+data.unclean <- data.unclean %>%
+  select(-starts_with("ca_"))
+  # Reorder so christian_affiliation is in a logical spot
+data.unclean <- data.unclean %>%
+  select(ID, start_time, finish_time, age, sex, gender, ethnicity, nationality,
+         religious_affiliation, christian_affiliation, religious_importance, everything())
 
 
 
